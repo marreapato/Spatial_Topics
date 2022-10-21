@@ -43,4 +43,13 @@ boxplot(sqrt(dados_nosso$altura)~dados_nosso$flor)
 fit <- lm(sqrt(dados_nosso$altura)~as.factor(dados_nosso$flor))
 anova(fit)
 fit_aov <- aov(fit)
-TukeyHSD(fit_aov)
+ver <- TukeyHSD(fit_aov)
+
+ver$`as.factor(dados_nosso$flor)`^2
+
+t.test(sqrt(dados_nosso$altura)~as.factor(dados_nosso$flor))
+ver <- t.test(sqrt(dados_nosso$altura)~as.factor(dados_nosso$flor))
+
+ver$estimate^2
+ver$conf.int^2
+
