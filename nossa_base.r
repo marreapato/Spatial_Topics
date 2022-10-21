@@ -53,3 +53,7 @@ ver <- t.test(sqrt(dados_nosso$altura)~as.factor(dados_nosso$flor))
 ver$estimate^2
 ver$conf.int^2
 
+# TESTANDO COMENTÁRIOS
+
+
+
