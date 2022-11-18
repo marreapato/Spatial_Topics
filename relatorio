@@ -1,0 +1,43 @@
+# Objetivo
+
+O objetivo deste trabalho consiste em verificar a presença de algum padrão em dados coletados na UFBA. 
+
+
+# Materiais
+
+Inicialmente foram gerados 300 pares aleatórios de pontos, e destes foram selecionados 50 pontos com suas respectivas coordenadas. 
+O grid foi medido com uma área de 9 metros quadrados próximo a portaria 1 e estacionamento da Universidade Federal da Bahia, campus Ondina, 
+e os 50 pontos gerados foram marcados dentro da área delimitada. Para delimitar a área foram utilizados barbante, palito de churrasco e fita métrica. 
+A medida em que as informações eram coletadas em cada ponto, um palito de churrasco era colocado neste ponto. 
+Para cada um deles foram coletadas a altura da planta em centímetros, a presença de flor, número de folhas e número de pétalas. 
+Caso a planta não apresentasse flor, era atribuído 0 para a presença de flor e número de pétalas. Se não houvesse planta no ponto indicado, 
+a planta mais próxima era considerada. Um dos pontos não continha planta e nem plantas nas proximidades (QUAL A DISTANCIA?), 
+e análise foi prosseguida com os outros 49.    
+
+
+# Análise descritiva
+
+A altura média das plantas é 9.3cm, o número médio de folhas é 9.26, e das 49 plantas analisadas 11 apresentaram flor. 
+Dentre as que continham flor, o número médio de pétalas foi de 2.6.
+
+Através do boxplot (flor~folhas) é possível observar que o número de folhas tende a ser maior quando não há flor, 
+e através do boxplot (flor~altura) é notado que a altura da planta tende a ser maior quando há flor.
+
+
+# Alguns testes
+
+Foi realizado o teste de normalidade Shapiro-Wilk para a variável resposta altura da planta, e foi rejeitado com um nível de significância de 5%. 
+Caso os dados não sejam normais, não é possível realizar o semi variograma. 
+
+Ao considerar a transformação de raiz quadrada da altura, foi novamente realizado o teste de Shapiro-Wilk e não foi rejeitada a normalidade 
+a um nível de 5%. Portanto, a análise foi prosseguida com a variável resposta sendo a raiz quadrada da altura da planta.
+
+
+
+
+
+
+
+
+
+
