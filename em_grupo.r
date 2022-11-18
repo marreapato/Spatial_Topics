@@ -52,7 +52,7 @@ require(geoR)
 dados <- dados_nosso
 plot(dados)
 dadosgeo=as.geodata(dados, coords.col = 1:2, data.col = 6)
-
+#Avaliando Altura
 #plot(dadosgeo)
 
 require(MASS)
@@ -159,5 +159,239 @@ proc=function(q){
 
 proc(10000)
 #o padrao é aleatorio
-#logo n há padrão
+#logo n há padrão na altura das plantas
+
+############################################
+
+
+#######################################################################
+require(geoR)
+dados <- dados_nosso
+plot(dados)
+dadosgeo=as.geodata(dados, coords.col = 1:2, data.col = 4)
+#Avaliando Pétalas
+#plot(dadosgeo)
+
+require(MASS)
+bor <- dadosgeo$coords[chull(dadosgeo$coords),]
+dadosgeo$borders <- bor
+plot(dadosgeo)
+#anisotropia em x, porem o mesmo não é identificado em y
+#parece n haver padrão
+
+
+points(dadosgeo,main="Distribuição dos Pontos",xlab="Latitude",ylab="Longitude")
+shapiro.test(dados$altura)# não sao normais
+#n podemos variograma
+
+#teste de mantel
+#h0: padrão é aleatório
+#h1: padrão não é aleatório
+
+x=dados$lat; x
+y=dados$long; y
+z=dados$petalas; z
+n=length(x); n
+
+sim=dadosgeo
+plot(sim)
+
+# Matriz L: matriz dos pontos (xi,yi)
+L=matrix(c(x,y), n, 2)
+L
+
+# Calcular n (n�mero de pares (xi,yi)): ordem da matriz sim�trica A (matriz
+# das dist�ncias das localiza��es)
+
+n=nrow(L)
+n
+
+# Antes de encontrar a matriz A, cria-se uma matriz nula A
+
+A=matrix(c(rep(0)),n,n)
+# dependendo da vers�o do R, pode ser A=matrix(c(0),n,n)
+
+for (i in 1:n) {
+  for (j in 1:n) {
+    if (i==j) {
+      A[i,j]=0 }
+    else {
+      A[i,j]=sqrt((L[i,1]-L[j,1])^2+(L[i,2]-L[j,2])^2) }
+  } }
+
+A
+
+# Matriz B: matriz das dist�ncias entre as repostas
+
+# Matriz Z: cont�m as respostas
+
+Z=matrix(c(z),n,1)
+Z
+
+# Calcula-se m (n�mero de observa��es de Z): ordem da matriz sim�trica B
+
+m=nrow(Z)
+m
+
+# Como em A, antes de encontrar a matriz B, cria-se uma matriz nula B
+
+B=matrix(c(rep(0)),m,m)
+# dependendo da vers�o do R, pode ser B=matrix(c(0), m,m)
+
+for (i in 1:m) {
+  for (j in 1:m) {
+    if (i==j) {
+      B[i,j]=0 }
+    else {
+      B[i,j]=sqrt((Z[i,1]-Z[j,1])^2) }
+  } }
+
+B
+
+A1=matrix(c(A),n,1)
+B1=matrix(c(B),m,1)
+A1
+B1
+
+cor(A1,B1,method='pearson')
+
+# Teste de Mantel
+
+proc=function(q){
+  # Lendo os dados
+  
+  aux=NULL
+  # Teste de aleatoriza��o
+  for (i in 1:q){
+    A1.al=sample(A1)
+    correlAl=cor(A1.al,B1, method="pearson")  
+    if (abs(correlAl)>=abs(cor(A1,B1, method="pearson")))
+      aux[i]=1
+    else aux[i]=0
+  }
+  pvalor=mean(aux)
+  pvalor
+  
+}
+
+proc(10000)
+#o padrao é aleatorio
+#logo n há padrão na quantidade de pétalas das plantas
+
+##############
+
+
+#######################################################################
+require(geoR)
+dados <- dados_nosso
+plot(dados)
+dadosgeo=as.geodata(dados, coords.col = 1:2, data.col = 3)
+#Avaliando Folhas
+#plot(dadosgeo)
+
+require(MASS)
+bor <- dadosgeo$coords[chull(dadosgeo$coords),]
+dadosgeo$borders <- bor
+plot(dadosgeo)
+#anisotropia em x, porem o mesmo não é identificado em y
+#parece n haver padrão
+
+
+points(dadosgeo,main="Distribuição dos Pontos",xlab="Latitude",ylab="Longitude")
+shapiro.test(dados$altura)# não sao normais
+#n podemos variograma
+
+#teste de mantel
+#h0: padrão é aleatório
+#h1: padrão não é aleatório
+
+x=dados$lat; x
+y=dados$long; y
+z=dados$folhas; z
+n=length(x); n
+
+sim=dadosgeo
+plot(sim)
+
+# Matriz L: matriz dos pontos (xi,yi)
+L=matrix(c(x,y), n, 2)
+L
+
+# Calcular n (n�mero de pares (xi,yi)): ordem da matriz sim�trica A (matriz
+# das dist�ncias das localiza��es)
+
+n=nrow(L)
+n
+
+# Antes de encontrar a matriz A, cria-se uma matriz nula A
+
+A=matrix(c(rep(0)),n,n)
+# dependendo da vers�o do R, pode ser A=matrix(c(0),n,n)
+
+for (i in 1:n) {
+  for (j in 1:n) {
+    if (i==j) {
+      A[i,j]=0 }
+    else {
+      A[i,j]=sqrt((L[i,1]-L[j,1])^2+(L[i,2]-L[j,2])^2) }
+  } }
+
+A
+
+# Matriz B: matriz das dist�ncias entre as repostas
+
+# Matriz Z: cont�m as respostas
+
+Z=matrix(c(z),n,1)
+Z
+
+# Calcula-se m (n�mero de observa��es de Z): ordem da matriz sim�trica B
+
+m=nrow(Z)
+m
+
+# Como em A, antes de encontrar a matriz B, cria-se uma matriz nula B
+
+B=matrix(c(rep(0)),m,m)
+# dependendo da vers�o do R, pode ser B=matrix(c(0), m,m)
+
+for (i in 1:m) {
+  for (j in 1:m) {
+    if (i==j) {
+      B[i,j]=0 }
+    else {
+      B[i,j]=sqrt((Z[i,1]-Z[j,1])^2) }
+  } }
+
+B
+
+A1=matrix(c(A),n,1)
+B1=matrix(c(B),m,1)
+A1
+B1
+
+cor(A1,B1,method='pearson')
+
+# Teste de Mantel
+
+proc=function(q){
+  # Lendo os dados
+  
+  aux=NULL
+  # Teste de aleatoriza��o
+  for (i in 1:q){
+    A1.al=sample(A1)
+    correlAl=cor(A1.al,B1, method="pearson")  
+    if (abs(correlAl)>=abs(cor(A1,B1, method="pearson")))
+      aux[i]=1
+    else aux[i]=0
+  }
+  pvalor=mean(aux)
+  pvalor
+  
+}
+
+proc(10000)
+#o padrao é aleatorio
+#logo n há padrão na quantidade de folhas das plantas
 
