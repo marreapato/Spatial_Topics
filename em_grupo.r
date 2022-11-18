@@ -46,7 +46,9 @@ plot(dados_nosso$altura,dados_nosso$petalas,main="Dispersão Altura e Pétalas",
 
 cor.test(dados_nosso$altura,dados_nosso$petalas,method = "spearman")
 
-
+shapiro.test(dados_nosso$altura)
+shapiro.test(dados_nosso$folhas)
+shapiro.test(dados_nosso$petalas)
 #######################################################################
 require(geoR)
 dados <- dados_nosso
