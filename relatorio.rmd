@@ -107,11 +107,7 @@ shapiro.test(dados_nosso$petalas)
 # Alguns testes
 
 Foi realizado o teste de normalidade Shapiro-Wilk para a variável resposta altura da planta, e foi rejeitado com um nível de significância de 5%. 
-Caso os dados não sejam normais, não é possível realizar o semi variograma. 
-
-Ao considerar a transformação de raiz quadrada da altura, foi novamente realizado o teste de Shapiro-Wilk e não foi rejeitada a normalidade 
-a um nível de 5%. Portanto, a análise foi prosseguida com a variável resposta sendo a raiz quadrada da altura da planta.
-
+Caso os dados não sejam normais, não é possível realizar o semi variograma. Neste caso vamos para o teste de aleatorização de Mantel. 
 
 
 
