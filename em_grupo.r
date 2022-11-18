@@ -13,7 +13,7 @@ y=sample(1:300,replace = F)
 dados <- data.frame(x=x,y=y)
 
 ###########################################
-
+#interessante colocar foto da nossa coleta
 dados$grupo=NULL
 dados$grupo[1:50] <- "selecionado"
 
@@ -36,7 +36,7 @@ dados_nosso <- na.omit(dados_nosso)
 summary(dados_nosso)
 
 ####################################################333
-
+#correlção entre altura e folhas, correlação entre altura e petalas
 cor.test(dados_nosso$altura,dados_nosso$folhas,method = "spearman")
 
 plot(dados_nosso$altura,dados_nosso$folhas,main="Dispersão Altura e Folhas",xlab="Altura",ylab="Folhas")
@@ -53,23 +53,31 @@ dados <- dados_nosso
 plot(dados)
 dadosgeo=as.geodata(dados, coords.col = 1:2, data.col = 6)
 
-plot(dadosgeo)
+#plot(dadosgeo)
 
+require(MASS)
+bor <- dadosgeo$coords[chull(dadosgeo$coords),]
+dadosgeo$borders <- bor
+plot(dadosgeo)
+#anisotropia em x, porem o mesmo não é identificado em y
+#parece n haver padrão
+
+
+points(dadosgeo,main="Distribuição dos Pontos",xlab="Latitude",ylab="Longitude")
 shapiro.test(dados$altura)# não sao normais
 #n podemos variograma
 
 #teste de mantel
+#h0: padrão é aleatório
+#h1: padrão não é aleatório
 
 x=dados$lat; x
 y=dados$long; y
 z=dados$altura; z
-sim1
 n=length(x); n
 
 sim=dadosgeo
 plot(sim)
-
-plot(sim1)
 
 # Matriz L: matriz dos pontos (xi,yi)
 L=matrix(c(x,y), n, 2)
@@ -150,6 +158,6 @@ proc=function(q){
 }
 
 proc(10000)
-
-
+#o padrao é aleatorio
+#logo n há padrão
 
