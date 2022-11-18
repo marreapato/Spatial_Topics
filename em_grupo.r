@@ -1,5 +1,7 @@
 require(geoR)
 #teste de mantel verificar padrão
+#dados de area (quando temos polígonos)
+#dados de superficie continua (pontos) - nossos dados
 
 ###################################
 #Gerando Pontos
