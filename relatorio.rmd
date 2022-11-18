@@ -228,7 +228,7 @@ proc=function(q){
   
 }
 
-proc(10000)
+paste("P-valor =",proc(10000))
 
 ```
 
