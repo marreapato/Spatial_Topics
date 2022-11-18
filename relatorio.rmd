@@ -65,7 +65,7 @@ A altura média das plantas é 9.3cm, o número médio de folhas é 9.26, e das 
 Dentre as que continham flor, o número médio de pétalas foi de 2.6.
 
 
-VER A RELAÇÃO FOLHA~ALTURA 
+VER A RELAÇÃO FOLHA~ALTURA (existe correlação positiva), o teste de correlação indica que temos evidência para rejeitar a hipótese que a verdadeira correlação é 0
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -86,7 +86,7 @@ plot(dados_nosso$altura,dados_nosso$folhas,main="Dispersão Altura e Folhas",xla
 
 ```
 
-VER A RELAÇÃO PETALA~ALTURA 
+VER A RELAÇÃO PETALA~ALTURA (existe correlação positiva), o teste de correlação indica que temos evidência para rejeitar a hipótese que a verdadeira correlação é 0
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
