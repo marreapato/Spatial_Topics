@@ -108,15 +108,139 @@ shapiro.test(dados_nosso$petalas)
 
 Todos os testes foram rejeitados a um nível de 5%, por tanto temos evidência de que a distribuição destas variáveis não é normal.
 
-# Teste de Aleatorização de Mantel
+## Teste de Aleatorização de Mantel
 
 Caso os dados não sejam normais, não é possível realizar o semi variograma. Neste caso vamos para o teste de aleatorização de Mantel. 
 
+## Análise do padrão para Altura
+
+```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
+
+#######################################################################
+require(geoR)
+dados <- dados_nosso
+#plot(dados)
+dadosgeo=as.geodata(dados, coords.col = 1:2, data.col = 6)
+#Avaliando Altura
+#plot(dadosgeo)
+
+require(MASS)
+bor <- dadosgeo$coords[chull(dadosgeo$coords),]
+dadosgeo$borders <- bor
+plot(dadosgeo)
+
+```
+
+
+```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
+
+points(dadosgeo,main="Distribuição dos Pontos",xlab="Latitude",ylab="Longitude")
+
+```
+
+Teste de Mantel 
+
+
+```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
+
+#h0: padrão é aleatório
+#h1: padrão não é aleatório
+
+x=dados$lat
+y=dados$long
+z=dados$altura
+n=length(x)
+
+sim=dadosgeo
+
+
+# Matriz L: matriz dos pontos (xi,yi)
+L=matrix(c(x,y), n, 2)
+
+
+# Calcular n (n�mero de pares (xi,yi)): ordem da matriz sim�trica A (matriz
+# das dist�ncias das localiza��es)
+
+n=nrow(L)
+
+
+# Antes de encontrar a matriz A, cria-se uma matriz nula A
+
+A=matrix(c(rep(0)),n,n)
+# dependendo da vers�o do R, pode ser A=matrix(c(0),n,n)
+
+for (i in 1:n) {
+  for (j in 1:n) {
+    if (i==j) {
+      A[i,j]=0 }
+    else {
+      A[i,j]=sqrt((L[i,1]-L[j,1])^2+(L[i,2]-L[j,2])^2) }
+  } }
 
 
 
+# Matriz B: matriz das dist�ncias entre as repostas
+
+# Matriz Z: cont�m as respostas
+
+Z=matrix(c(z),n,1)
 
 
+# Calcula-se m (n�mero de observa��es de Z): ordem da matriz sim�trica B
+
+m=nrow(Z)
+
+
+# Como em A, antes de encontrar a matriz B, cria-se uma matriz nula B
+
+B=matrix(c(rep(0)),m,m)
+# dependendo da vers�o do R, pode ser B=matrix(c(0), m,m)
+
+for (i in 1:m) {
+  for (j in 1:m) {
+    if (i==j) {
+      B[i,j]=0 }
+    else {
+      B[i,j]=sqrt((Z[i,1]-Z[j,1])^2) }
+  } }
+
+
+
+A1=matrix(c(A),n,1)
+B1=matrix(c(B),m,1)
+
+# Teste de Mantel
+
+proc=function(q){
+  # Lendo os dados
+  
+  aux=NULL
+  # Teste de aleatoriza��o
+  for (i in 1:q){
+    A1.al=sample(A1)
+    correlAl=cor(A1.al,B1, method="pearson")  
+    if (abs(correlAl)>=abs(cor(A1,B1, method="pearson")))
+      aux[i]=1
+    else aux[i]=0
+  }
+  pvalor=mean(aux)
+  #pvalor
+  
+}
+
+proc(10000)
+
+```
+
+
+
+## Análise do padrão para a quantidade de pétalas
+
+
+## Análise do padrão para o número de folhas
+
+
+# Conclusão
 
 
 
