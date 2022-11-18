@@ -23,6 +23,8 @@ Dentre as que continham flor, o número médio de pétalas foi de 2.6.
 Através do boxplot (flor~folhas) é possível observar que o número de folhas tende a ser maior quando não há flor, 
 e através do boxplot (flor~altura) é notado que a altura da planta tende a ser maior quando há flor.
 
+VER A RELAÇÃO FOLHA~ALTURA
+
 
 # Alguns testes
 
