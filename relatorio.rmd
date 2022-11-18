@@ -96,6 +96,8 @@ cor.test(dados_nosso$altura,dados_nosso$petalas,method = "spearman")
 COMO NÃO SÃO NORMAIS, TEM QUE FAZER O TESTE DE SPERMAN
 o teste é bilateral pq não temos uma informação a priori
 
+Os resultados do teste de normalidade Shapiro-Wilk abaixo são respectivamente para a altura, número de folas e número de pétalas:
+
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
 shapiro.test(dados_nosso$altura)
@@ -104,9 +106,10 @@ shapiro.test(dados_nosso$petalas)
 
 ```
 
-# Alguns testes
+Todos os testes foram rejeitados a um nível de 5%, por tanto temos evidência de que a distribuição destas variáveis não é normal.
 
-Foi realizado o teste de normalidade Shapiro-Wilk para a variável resposta altura da planta, e foi rejeitado com um nível de significância de 5%. 
+# Teste de Aleatorização de Mantel
+
 Caso os dados não sejam normais, não é possível realizar o semi variograma. Neste caso vamos para o teste de aleatorização de Mantel. 
 
 
