@@ -487,4 +487,3 @@ paste("P-valor =",proc(10000))
 Não encontramos padrão espacial a um nível de 5% de significância
 
 
-
