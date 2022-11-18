@@ -1,6 +1,8 @@
 ---
 title: "Trabalho de Estatística Espacial"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 date: "Camila, Lucas, Mariana e Samuel"
 ---
 
@@ -53,6 +55,9 @@ Caso a planta não apresentasse flor, era atribuído 0 para a presença de flor 
 a planta mais próxima era considerada. Um dos pontos não continha planta e nem plantas nas proximidades (QUAL A DISTANCIA?), 
 e análise foi prosseguida com os outros 49.    
 
+Area experimental:
+
+![Area Experimental](area_exp1.jpeg "Title")
 
 # Análise descritiva
 
@@ -485,5 +490,6 @@ paste("P-valor =",proc(10000))
 # Conclusão
 
 Não encontramos padrão espacial a um nível de 5% de significância
+
 
 
