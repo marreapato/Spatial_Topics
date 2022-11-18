@@ -1,4 +1,5 @@
 require(geoR)
+#teste de mantel verificar padrão
 
 ###################################
 #Gerando Pontos
