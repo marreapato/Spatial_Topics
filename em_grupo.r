@@ -3,6 +3,8 @@ require(geoR)
 #dados de area (quando temos polígonos) moran
 #dados de superficie continua (pontos) - nossos dados (mantel)
 
+require(geoR)
+
 ###################################
 #Gerando Pontos
 #install.packages("geoR")
@@ -12,7 +14,7 @@ x=sample(1:300,replace = F)
 set.seed(156)
 y=sample(1:300,replace = F)
 #?sample
-plot(x,y)  #pontos
+#plot(x,y)  #pontos
 dados <- data.frame(x=x,y=y)
 
 ###########################################
@@ -22,13 +24,13 @@ dados$grupo[1:50] <- "selecionado"
 
 dados$grupo[51:300] <- "n_selecionado"
 
-plot(x=dados$x,y=dados$y,pch="o",col=as.factor(dados$grupo),xlab="lat",ylab="long")
+plot(x=dados$x,y=dados$y,pch="o",col=as.factor(dados$grupo),xlab="latitude",ylab="longitude",main="Pontos selecionados em Vermelho")
 
 dados$x[1:50]#latitude
 dados$y[1:50]#longitude     
 
 
-
+#base de dados
 dados_nosso <- data.frame(lat=dados$x[1:50],long=dados$y[1:50])
 dados_nosso$folhas <- c(26,4,6,1,6,22,15,6,6,15,12,12,5,6,33,64,2,2,9,6,6,7,8,9,7,17,4,6,8,1,10,6,9,9,4,4,3,2,5,5,4,6,2,NA,12,8,4,5,18,7)
 dados_nosso$petalas <- c(0,0,0,0,0,0,4,16,5,0,0,0,0,4,0,0,0,0,16,3,0,0,0,0,0,0,0,0,0,0,5,0,16,0,0,0,5,0,0,0,0,0,0,NA,12,8,4,5,18,7)
@@ -37,30 +39,28 @@ dados_nosso$altura <- c(21,0,2,1,0,8,25,15,17,5,4,10,2,13.5,35.5,28,2,2,18.75,12
 
 dados_nosso <- na.omit(dados_nosso)
 summary(dados_nosso)
-boxplot(dados_nosso$folhas~dados_nosso$flor)
 
-boxplot(dados_nosso$altura~dados_nosso$flor)#altura parece maior
+####################################################333
 
-shapiro.test(sqrt(dados_nosso$altura))#alturaa é normal
+cor.test(dados_nosso$altura,dados_nosso$folhas,method = "spearman")
 
-boxplot(sqrt(dados_nosso$altura)~dados_nosso$flor)
+plot(dados_nosso$altura,dados_nosso$folhas,main="Dispersão Altura e Folhas",xlab="Altura",ylab="Folhas")
 
-t.test(sqrt(dados_nosso$altura)~as.factor(dados_nosso$flor),pairwise=T)
 
-ver <- t.test(sqrt(dados_nosso$altura)~as.factor(dados_nosso$flor),pairwise=T)
+plot(dados_nosso$altura,dados_nosso$petalas,main="Dispersão Altura e Pétalas",xlab="Altura",ylab="Pétalas")
 
-ver$estimate^2
-ver$conf.int^2
+cor.test(dados_nosso$altura,dados_nosso$petalas,method = "spearman")
+
 
 #######################################################################
 require(geoR)
 dados <- dados_nosso
 plot(dados)
-dados_nosso$raiz_altura <- sqrt(dados$altura)
-dadosgeo=as.geodata(dados_nosso, coords.col = 1:2, data.col = 7)
+dadosgeo=as.geodata(dados, coords.col = 1:2, data.col = 6)
 
 plot(dadosgeo)
 
 ###################################
+
 
 
