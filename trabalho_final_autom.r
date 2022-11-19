@@ -263,7 +263,7 @@ tmap_style("natural")
 (tm <- tm_basemap(leaflet::providers$Stamen.TonerLite) +
     tm_shape(estados) + tm_polygons("suinos_no_ano",textNA = "Sem Registro",colorNA = "grey",title='Peso Total das Carcaças de Suínos',)+
     tm_tiles('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}') +
-    tm_layout(legend.position = c("left", "bottom"),main.title = "Distribuição espacial do abatimento de Suínos no Brasil",main.title.size = 2,main.title.position = "center",
+    tm_layout(legend.position = c("left", "bottom"),main.title = "Distribuição espacial do peso de carcaça dos Suínos no Brasil",main.title.size = 2,main.title.position = "center",
               title.position = c('left', 'bottom'),legend.bg.alpha = 0.3)+
     tm_compass(type = "4star", size = 2, position = c("right", "top"))+
     #tm_text("name", size = "AREA")+,
