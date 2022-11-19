@@ -3,7 +3,7 @@ title: "Trabalho de Estatística Espacial"
 output:
   pdf_document: default
   html_document: default
-date: "Camila, Lucas, Mariana e Samuel"
+date: "Camila, Lucas Rabelo, Mariana e Samuel"
 ---
 
 # Objetivo
@@ -498,7 +498,7 @@ paste("P-valor =",proc(10000))
 
 # Conclusão
 
-Não encontramos padrão espacial a um nível de 5% de significância, no entanto a probabilidade de se cometer o erro do tipo 1 ao rejeitar a hipótese de que o padrão espacial é aleatório para a quantidade de folhas é de 8%. Talvez uma adaptação no métodod e coleta de dados, ou a coleta de mais pontos poderia ajudar a identificar algum padrão na quantidade de folhas das plantas.
+Não encontramos padrão espacial a um nível de 5% de significância, no entanto a probabilidade de se cometer o erro do tipo 1 ao rejeitar a hipótese de que o padrão espacial é aleatório para a quantidade de folhas é de 8%. Talvez uma adaptação no método de coleta de dados, ou a coleta de mais pontos poderia ajudar a identificar algum padrão na quantidade de folhas das plantas.
 
 
 
