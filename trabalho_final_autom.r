@@ -270,4 +270,3 @@ tmap_style("natural")
     tm_facets(by='ano'))
 
 #tmap_save(tm, "my_map.png", width = 1000, height = 750, dpi = 300)
-
