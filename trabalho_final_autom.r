@@ -270,3 +270,87 @@ tmap_style("natural")
     tm_facets(by='ano'))
 
 #tmap_save(tm, "my_map.png", width = 1000, height = 750, dpi = 300)
+###################################
+library(rgdal)
+library(spdep)
+
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2021) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+us.nb4<-knearneigh(centroids.df, k=2)
+us.nb4<-knn2nb(us.nb4)
+us.nb4<-make.sym.nb(us.nb4)
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=4) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm by row
+us.wt4<-nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm by row
+hist(estados21$suinos_no_ano)
+#Creating an auto- model
+#this involves creating an "auto-covariate"z
+estados21$lag_rate<-lag.listw(x=us.wt4, var=(mesos_sp_sp$suinos_no_ano))
+#binomial response
+fit.bn.auto<-glm(suinos_no_ano~lag_rate+ano, family=poisson(link="log"), data=estados21)
+summary(fit.bn.auto)
+
+plot(mesos_sp_sp, col='gray', border='blue', lwd=2,main= "Vizinhos")
+plot(PPV3.w, coordinates(mesos_sp_sp), col='red', lwd=2, add=TRUE)#links
+#lots of variables missing
+
+#monthly
+#death_pop
+moran.plot(mesos_sp_sp$suinos_no_ano, PPV3.w, zero.policy=TRUE)
+moran.test(mesos_sp_sp$suinos_no_ano,PPV3.w,zero.policy = TRUE,na.action = na.omit)
+moran.mc(nsim=100,mesos_sp_sp$suinos_no_ano,PPV3.w,zero.policy = TRUE,na.action = na.omit)
+#validated
+
+
+#death pop local
+local.mi.prod<-localmoran(mesos_sp_sp$suinos_no_ano, PPV3.w)
+
+mesos_sp_sp$lmi<-local.mi.prod[,1]
+
+mesos_sp_sp$lmi.p<-local.mi.prod[,5]
+
+mesos_sp_sp$lmi.p.sig<-as.factor(ifelse(local.mi.prod[,5]<.001,"Sig p<.001",
+                                         ifelse(local.mi.prod[,5]<.05,"Sig p<.05", "NS" )))
+
+
+
+
+spplot(mesos_sp_sp, "lmi.p.sig", col.regions=c("white", "#E6550D","#FDAE6B"), main = "Peso dos Suinos auto Corr",colorkey=FALSE)
+#boxmap
+quadrant <- vector(mode="numeric",length=nrow(local.mi.prod))
+
+# centers the variable of interest around its mean
+m.qualification <- mesos_sp_sp$suinos_no_ano - mean(mesos_sp_sp$suinos_no_ano)     
+
+# centers the local Moran's around the mean
+m.local <- local.mi.prod[,1] - mean(local.mi.prod[,1])    
+
+# significance threshold
+signif <- 0.05 
+
+# builds a data quadrant
+#positions
+quadrant[m.qualification >0 & m.local>0] <- 4#AA  
+quadrant[m.qualification <0 & m.local<0] <- 1#BB      
+quadrant[m.qualification <0 & m.local>0] <- 2#BA
+quadrant[m.qualification >0 & m.local<0] <- 3#AB
+#quadrant[local.mi.prod[,5]>signif] <- 0#you can choose not to run it
+# plot in r
+?dev.size
+brks <- c(0,1,2,3,4)
+colors <- c("white","blue",rgb(0,0,1,alpha=0.4),rgb(1,0,0,alpha=0.4),"red")
+plot(mesos_sp_sp,border="lightgray",col=colors[findInterval(quadrant,brks,all.inside=FALSE)],main="Janeiro")
+box()  
+legend("bottomleft", legend = c("Nenhum","BB","BA","AB","AA"),
+       fill=colors,bty="n")
+
+
+
