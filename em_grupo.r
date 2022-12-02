@@ -49,6 +49,8 @@ cor.test(dados_nosso$altura,dados_nosso$petalas,method = "spearman")
 shapiro.test(dados_nosso$altura)
 shapiro.test(dados_nosso$folhas)
 shapiro.test(dados_nosso$petalas)
+
+boxplot(dados_nosso$altura~dados_nosso$flor,main="Boxplot da Altura (Flor, Não Flor)",xlab="flor?",ylab="altura (cm)")
 #######################################################################
 require(geoR)
 dados <- dados_nosso
