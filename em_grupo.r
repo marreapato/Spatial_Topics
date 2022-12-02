@@ -51,6 +51,9 @@ shapiro.test(dados_nosso$folhas)
 shapiro.test(dados_nosso$petalas)
 
 boxplot(dados_nosso$altura~dados_nosso$flor,main="Boxplot da Altura (Flor, Não Flor)",xlab="flor?",ylab="altura (cm)")
+boxplot(dados_nosso$folhas~dados_nosso$flor,main="Boxplot da quantidade de folhas (Flor, Não Flor)",xlab="flor?",ylab="n de folhas")
+boxplot(dados_nosso$petalas~dados_nosso$flor,main="Boxplot da quantidade de Pétalas (Flor, Não Flor)",xlab="flor?",ylab="Pétalas")
+
 #######################################################################
 require(geoR)
 dados <- dados_nosso
