@@ -1,8 +1,8 @@
 ---
 title: "Trabalho de Estatística Espacial"
 output:
-  # pdf_document: default
   html_document: default
+  pdf_document: default
 date: "Camila Braz, Lucas Rabelo, Mariana Almeida e Samuel Veríssimo"
 ---
 
@@ -119,6 +119,40 @@ cor.test(dados_nosso$altura,dados_nosso$petalas,method = "spearman")
 
 O teste de correlação de Spearman indica que existem evidências para rejeitar a hipótese que a verdadeira correlação é 0, portanto, existe correlação entre as variáveis.
 
+A **Figura 5** indica que as flores parecem ter uma maior altura em cm do que as plantas, no entanto vale ressaltar que existe grande variabilidade na altura das plantas, com a presença de outliers.
+
+```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
+
+boxplot(dados_nosso$altura~dados_nosso$flor,main="Boxplot da Altura (Flor, Não Flor)",xlab="flor?",ylab="altura (cm)")
+
+
+```
+
+**Figura 5: Boxplot Flor (Categórica) x Altura**
+
+A **Figura 6** indica que as flores e as plantas não parecem se diferenciar tanto quanto ao número de folhas, apesar da variabilidade do número de folhas ser menor para as flores.
+
+```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
+
+boxplot(dados_nosso$folhas~dados_nosso$flor,main="Boxplot da quantidade de folhas (Flor, Não Flor)",xlab="flor?",ylab="n de folhas")
+
+
+```
+
+**Figura 6: Boxplot Flor (Categórica) x Folhas**
+
+A **Figura 7** indica que as flores parecem ter uma maior quantidade de pétalas que as plantas, essa categoria pode ser aberta a discussão, pois algumas plantas em que não havia clareza se deviam ser consideradas como flor ou planta, foram consideradas como plantas.
+
+```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
+
+boxplot(dados_nosso$petalas~dados_nosso$flor,main="Boxplot da quantidade de Pétalas (Flor, Não Flor)",xlab="flor?",ylab="Pétalas")
+
+
+```
+
+**Figura 7: Boxplot Flor (Categórica) x Pétalas**
+
+
 Agora será analisada a normalidade das variáveis altura em centímetros, número de folhas e número de pétalas. Como não existem informações a priori, será considerado o teste de Shapiro-Wilk, bilateral. Os resultados do teste de normalidade abaixo para a altura, número de folhas e número de pétalas, são respectivamente:
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
@@ -160,9 +194,9 @@ plot(dadosgeo)
 
 ```
 
-**Figura 5: Análise do padrão para Altura**
+**Figura 8: Análise do padrão para Altura**
 
-Na Figura 5, no painel superior esquerdo, é possível verificar que existe anisotropia no eixo x, porém o mesmo não é identificado em y. Realizando análise a sentimento, parece haver padrão no eixo y devido a concentração de cores quentes (vermelho e amarelo). No caso de haver anisotropia, será baixa.
+Na Figura 8, no painel superior esquerdo, é possível verificar que existe anisotropia no eixo x, porém o mesmo não é identificado em y. Realizando análise a sentimento, parece haver padrão no eixo y devido a concentração de cores quentes (vermelho e amarelo). No caso de haver anisotropia, será baixa.
 
 O painel superior direito, mostra a dispersão das plantas baixas. Nota-se que as plantas baixas estão concentradas no canto superior esquerdo. O painel inferior esquerdo mostra a dispersão das plantas altas. Esse painel, por outro lado, mostra que as plantas altas estão concentradas na área inferior esquerda. Esses resultados dão indícios de que existe algum tipo de padrão nos dados.
 
@@ -172,9 +206,9 @@ points(dadosgeo,main="Distribuição dos Pontos Para Altura",xlab="Latitude",yla
 
 ```
 
-**Figura 6: Distribuição dos pontos para a Altura**
+**Figura 9: Distribuição dos pontos para a Altura**
 
-Na Figura 6, o gráfico de distribuição dos pontos mostra que existe uma concentração de plantas com altura alta no canto superior esquerdo e uma concentração de plantas com altura baixa no canto inferior direito, no entanto, reforçando a idéia de que existe algum tipo de padrão.
+Na Figura 9, o gráfico de distribuição dos pontos mostra que existe uma concentração de plantas com altura alta no canto superior esquerdo e uma concentração de plantas com altura baixa no canto inferior direito, no entanto, reforçando a idéia de que existe algum tipo de padrão.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -288,9 +322,9 @@ plot(dadosgeo)
 
 ```
 
-**Figura 7: Análise do padrão para a quantidade de pétalas**
+**Figura 10: Análise do padrão para a quantidade de pétalas**
 
-Na Figura 7 não parece haver anisotropia. No painel superior esquerdo, verifica-se a concentração de cores frias (azul e verde). Assim, realizando análise a sentimento parece não haver padrão espacial.
+Na Figura 10 não parece haver anisotropia. No painel superior esquerdo, verifica-se a concentração de cores frias (azul e verde). Assim, realizando análise a sentimento parece não haver padrão espacial.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -298,9 +332,9 @@ points(dadosgeo,main="Distribuição dos Pontos Para Pétalas",xlab="Latitude",y
 
 ```
 
-**Figura 8: Distribuição de pontos para as pétalas.**
+**Figura 11: Distribuição de pontos para as pétalas.**
 
-O gráfico de pontos, na Figura 8, parece não indicar tendência de padrão espacial não aleatório na quantidade de pétalas.
+O gráfico de pontos, na Figura 11, parece não indicar tendência de padrão espacial não aleatório na quantidade de pétalas.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -414,9 +448,9 @@ plot(dadosgeo)
 
 ```
 
-**Figura 9: Análise do padrão para o número de folhas**
+**Figura 12: Análise do padrão para o número de folhas**
 
-Na Figura 9, verifica-se anisotropia no eixo x, porém o mesmo não é identificado em y. No primeiro gráfico, nota-se uma concentração de cores frias no canto inferior direito, enquanto no canto inferior esquerdo existe a concentração de cores quentes. Por outro lado, no canto superior esquerdo e no meio do gráfico existe a concentração de cores quentes (amarelo e vermelho). Realizando essa análise a sentimento, considerando a anisotropia em x e o gráfico de cores quentes e frias, parece haver indicativo de padrão espacial não aleatório.
+Na Figura 12, verifica-se anisotropia no eixo x, porém o mesmo não é identificado em y. No primeiro gráfico, nota-se uma concentração de cores frias no canto inferior direito, enquanto no canto inferior esquerdo existe a concentração de cores quentes. Por outro lado, no canto superior esquerdo e no meio do gráfico existe a concentração de cores quentes (amarelo e vermelho). Realizando essa análise a sentimento, considerando a anisotropia em x e o gráfico de cores quentes e frias, parece haver indicativo de padrão espacial não aleatório.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -424,9 +458,9 @@ points(dadosgeo,main="Distribuição dos Pontos nas Folhas",xlab="Latitude",ylab
 
 ```
 
-**Figura 10: Distribuição dos Pontos nas Folhas**
+**Figura 13: Distribuição dos Pontos nas Folhas**
 
-O gráfico da distribuição dos pontos, apresentado na Figura 10, mostra a concentração de pontos de tamanho pequeno em diversas localizações, enquanto os pontos de tamanho médio e grande parecem estar mais dispersos pelo gráfico.
+O gráfico da distribuição dos pontos, apresentado na Figura 13, mostra a concentração de pontos de tamanho pequeno em diversas localizações, enquanto os pontos de tamanho médio e grande parecem estar mais dispersos pelo gráfico.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -523,7 +557,7 @@ Realizando o Teste de Mantel, não temos evidência, a um nível de 5% de signif
 
 # Conclusão
 
-Não foi encontrado padrão espacial a um nível de 5% de significância. No entanto, a probabilidade de se cometer o erro do tipo 1 ao rejeitar a hipótese de que o padrão espacial é aleatório para a quantidade de folhas é de 8%. Como o erro do tipo 1 é baixo e a correlação de Spearman entre altura e número de folhas é de 63%, uma adaptação no método de coleta de dados, ou a coleta de mais pontos, poderia ajudar a identificar algum padrão na quantidade de folhas das plantas.
+Não foi encontrado padrão espacial a um nível de 5% de significância. No entanto, a probabilidade de se cometer o erro do tipo 1 (rejeitar a hipótese nula quando ela é verdadeira) ao rejeitar a hipótese de que o padrão espacial é aleatório para a quantidade de folhas é de 8%. Como o erro do tipo 1 é baixo e a correlação de Spearman entre altura e número de folhas é de 63%, uma adaptação no método de coleta de dados, ou a coleta de mais pontos, poderia ajudar a identificar algum padrão na quantidade de folhas das plantas.
 
 
 # Referências
