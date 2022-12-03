@@ -1,0 +1,650 @@
+---
+title: Dependência Espacial do abate de Suínos no Brasil entre 2018
+  e 2021
+author: "Lucas Rabelo e Mariana Almeida"
+date: "2022-11-09"
+---
+
+```{r setup, include=FALSE}
+#install.packages("WDI")
+library(tidyverse)
+library(Metrics)
+library(MLmetrics)
+library(forecast)
+library(zoo)
+library(nnfor)
+#install.packages("sidrar")
+library(sidrar)
+library(tsfgrnn)
+library(car)
+library(stringr)
+library(dplyr)
+library(stringr)
+library(viridisLite)
+library(zoo)
+library(bslib)
+library(tidyverse)
+library(ggthemes)
+library(zoo)
+library(tsfgrnn)
+library(car)
+library(lubridate)
+library(chron)
+library(data.table)
+library(treemapify)
+library(plotly)
+library(DT)
+library(rgdal)
+library(geobr)
+library(devtools)
+#install.packages("devtools")
+#devtools::install_github("ipeaGIT/geobr", subdir = "r-package")
+library(geobr)
+library(sf)
+library(tmap)
+library(sp)
+library(raster)
+library(reshape2)
+#options("repos")
+library(leaflet)
+library(spData)
+library(WDI)     # for World Bank goodness
+library(GetBCBData)
+library(ipeadatar)
+#install.packages("ipeadatar")
+#install.packages("GetBCBData")
+library(OECD)
+##############################33
+#install.packages("sidrar")
+library(sidrar)
+# Código de consulta com filtros na tabela 7060 (Sidra/IBGE)
+cod_sidra <- "/t/1093/n1/all/n3/all/v/all/p/all/c12716/115236/c12529/118225/d/v1000151%202,v1000284%202,v1000285%202"
+# Coleta dos dados com o código
+dados_sidra <- sidrar::get_sidra(api = cod_sidra)
+
+```
+
+## Introdução
+
+A garantia do consumo de proteína de origem animal é um dos maiores desafios para a sociedade brasileira neste momento de grave crise econômica e social decorrente da Covid-19, o que foi piorado pela redução drástica das políticas públicas de segurança alimentar. Dados divulgados em junho de 2022, indicam que 33,1 milhões de pessoas não têm o que comer diariamente. O cenário vem piorando rapidamente. Em 2020, esse número estava em 19 milhões de pessoas. Quando se considera a categoria mais abrangente daqueles que estão em “insegurança alimentar leve”, o número chegou a 125,2 milhões de brasileiros em 2022. A categoria insegurança alimentar leve indica as pessoas que têm preocupação ou incerteza de acesso a alimentos no futuro, bem como quando se verifica diminuição da qualidade adequada dos alimentos para evitar a diminuição da quantidade. Os dados são do Inquérito Nacional sobre Insegurança Alimentar no Contexto da Pandemia da Covid-19 no Brasil, feito pela Rede Brasileira de Pesquisa em Soberania e Segurança Alimentar e Nutricional (Rede PENSSAN) ^[II VIGISAN - Inquérito Nacional sobre Insegurança Alimentar no Contexto da Pandemia da Covid-19 no Brasil. Disponível em: https://olheparaafome.com.br/wp-content/uploads/2022/06/Relatorio-II-VIGISAN-2022.pdf Acesso em: 03/12/2022.].
+
+A falta de proteína e de alimentos de boa qualidade tem impacto direto na saúde das pessoas com implicações especialmente negativas para crianças e adolescentes em fase de desenvolvimento. A carne suína, de frango e ovos tem sido vistos por sociedades em todo mundo como uma estratégia para a produção de alimentos de qualidade mais baratos, especialmente se comparado com a proteína bovina, de modo a diminuir o custo da alimentação para as famílias. Temos ciência de que o problema é complexo e envolve múltiplos fatores, mas esperamos que esse estudo ajude a jogar luz sobre uma das possíveis soluções para aumentar e garantir o consumo de proteína animal: a carne suína.
+
+Assim, o objetivo deste trabalho é apresentar os resultados de um exercício analítico que visa investigar a dependência espacial para o abate de suínos no Brasil. Fundamental tanto para que governos elaborarem políticas públicas adequadas para garantir a soberania alimentar e desenvolvimento das regiões promissoras. 
+
+## Metodologia
+
+
+### Dados
+
+Os dados utilizados para a análise são oriundos de Pesquisa Trimestral do Abate de Animais realizada pelo Instituto Brasileiro de Geografia e Estatística (IBGE), que divulga o número total de animais abatidos e peso total das carcaças em quilogramas para bovinos, suínos e frangos. A divulgação é por trimestre, sempre com uma defasagem de três meses em relação à data da coleta. Os dados são coletados em estabelecimentos de abate sob a fiscalização sanitária federal, estadual ou municipal, isto é, animais abatidos sem fiscalização por parte da vigilância sanitária não são registrados pela pesquisa. Desde 2013, os dados são enviados por informantes em questionários específicos por meio da internet. 
+
+Neste trabalho, foi usada uma série histórica que apresenta a quantidade trimestral de cabeças de suínos abatidos e o peso total das carcaças de 1997 a 2022. Procedeu-se uma análise detalhada dos dados no período entre 2018 e 2021.
+
+### Índice de Moran
+
+ Para avaliar a dependência espacial foi utilizado o método K-ésimo vizinho mais próximo (KNN, do inglês K-nearest neighbors) para ligar os polígonos e criar a matriz de vizinhança normalizada por linha, para que fossem calculados o Índice de Moran global e o local. O índice global é o método tradicionalmente usado e condensa a dependência espacial em apenas um número ^[BRAGA, Altemir da Silva.*et al*. (2010) Estudo de Dependência Espacial utilizando Análise de Dados de Área Aplicada na Mesorregião Metropolitana de Belo Horizonte por meio do Indicador Econômico PIB. 19ª SINAPE.  [S.l.]. Disponível em: <http://www2.ime.unicamp.br/sinape/sites/default/files/Resumo%20expandido%20SINAPE.pdf>], no entanto o uso do indicador local de associação espacial (LISA) utilizado para identificar padrões espaciais, se faz útil pois de acordo com Maia, Gomes e Almeida (2018, p.930) enquanto o índice de Moran global pode sugerir que haja baixa correlação espacial nos dados, os valores do LISA podem identificar sub-regiões geográficas em que o agrupamento (clustering) negativo ou positivo ocorram ^[MAIA, André Luis Santiago; GOMES, Gecynalda Soares da Silva; ALMEIDA, Isabelle Galdino de (2018). SPATIAL STUDY OF INCIDENCE RATES OF OCCUPATIONAL ACCIDENTS IN BRAZIL FROM 2002 TO 2012. REVISTA BRASILEIRA DE BIOMETRIA, [S.l.], v. 36, n. 4, p. 927-941. ISSN 1983-0823. Available at: <http://www.biometria.ufla.br/index.php/BBJ/article/view/322>. Date accessed: 03/12/2022. doi: https://doi.org/10.28951/rbb.v36i4.322].
+
+O Índice global de Moran é calculado **(Equação 1)** de tal maneira que temos 
+$w$ como sendo a matriz de vizinhança, e $x$ os valores da variável de estudo e $n$ o número de polígonos identificados e $\overline x$ é a média:
+
+
+**Equação 1**
+
+$$Im = \frac{n\sum_{i=1}^{n}\sum_{j=1}^{n}(x_{i}-\overline{x})(x_{j}-\overline{x})w_{ij}}{W\sum_{i=1}^{n}(x_{i}-\overline{x})^2}$$
+
+Onde $W$ é definido pela seguinte equação:
+ $$W=\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}$$
+ 
+Os valores variam de 1 a -1, sendo que o 0 indica a ausência de correlação espacial, no entanto como valores dentre positivos e até 1 indicam correlação direta e positiva e negativos até -1 correlação inversa, por estarmos interessados na presença de dependência espacial positiva os testes de hipótese foram construídos com nível de confiança de 95%, seguindo a premissa de que a hipótese alternativa corresponde a um índice maior que zero, e a hipótese nula é de independência espacial, ou seja H0: I = 0 e H1: I > 0.A validação do índice foi feita utilizando 10.000 simulações em um teste de permutações aleatórias (*Monte-Carlo*) ^[SEFFRIN, R.; ARAUJO, E. C.; BAZZI, C. L.. Análise espacial de área aplicada a produtividade de soja na região oeste do Paraná utilizando o software R. R. bras. Geom., Curitiba, v. 6, n. 1, p. 23-43, jan/mar.2018. Disponível em: <https://periodicos.utfpr.edu.br/rbgeo/article/view/5912>. Acesso em: 03/12/2022.DOI: 10.3895/rbgeo.v6n1.5912].
+
+Já o Índice de Moran local (LISA) é calculado pela seguinte equação (**Equação 2**):
+
+
+**Equação 2**
+ $$I(i) = \frac{x_{i}-\overline x}{s^{2}_{i}}\sum_{j=1}^{n}w_{ij}(x_{j}-\overline{x}), i=1,...,n, j\neq i$$
+ Onde $s^{2}_{i}$ é a variância da variável de estudo $x_{i}$:
+  $$s^{2}(i) = \frac{\sum_{j=1}^{n}(x_{j}-\overline x)^{2}}{n-1}, i=1,...,n, j\neq i$$
+  
+  Os Boxmaps são uma representação cartográfica dos quadrantes do gráfico de dispersão de Moran, onde temos que em Seffrin, Araujo e Bazzi (2018,p.28) os valores HH e LL significam respectivamente que essas áreas possuem valores altos rodeadas por áreas que apresentam valores também altos e valores baixos da variável de interesse, rodeadas por áreas que apresentam valores baixos, o valor LH representa áreas com valor baixo rodeada de outras áreas com valores altos, já o HL é o contrário, são regiões com valores altos próximas de locais com valores baixos, as funções utilizadas para o cálculo da dependência espacial estão pesentes na bibllioteca ```spdep``` do software estatístico R (Versão 4.0.3).
+
+## Resultados e Discussão
+
+
+```{r echo=F,message=F,error=F,warning=F,include=FALSE}
+
+mesos <- read_state(year=2017,simplified = T)
+
+mesos$name_state <- toupper(iconv(mesos$name_state,from="UTF-8",to="ASCII//TRANSLIT"))
+
+mesos <- mesos[,c(3,6)]
+estados <- dados_sidra %>% filter(Variável=="Animais abatidos"&`Brasil e Unidade da Federação`!="Brasil")
+
+estados$`Brasil e Unidade da Federação` <- toupper(iconv(estados$`Brasil e Unidade da Federação`,from="UTF-8",to="ASCII//TRANSLIT"))
+#mesos$name_state <- toupper(mesos$name_state)
+
+estados <- as_tibble(estados)
+
+mesos_sp <- left_join(mesos,estados, by = c("name_state" = "Brasil e Unidade da Federação"))
+#mesos_sp_sp <- as(mesos_sp,Class = "Spatial")
+#centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+################################################
+###########################
+
+# Ano de 2021
+
+estados <- mesos_sp %>% filter(Trimestre=="1º trimestre 2021"|Trimestre=="2º trimestre 2021"|Trimestre=="3º trimestre 2021"|Trimestre=="4º trimestre 2021") %>% group_by(name_state) %>% summarize(suinos_no_ano=sum(Valor))
+###################################
+
+estados$ano <- rep(2021,nrow(estados))
+
+tmap_mode(mode = "plot")
+tmap_style("natural")
+
+```
+
+
+Considerando-se os anos de 2018, 2019, 2020 e 2021 a unidade federativa que mais abateu suínos foi Santa Catarina, seguido dos estados do Paraná, Rio Grande do Sul e Minas Gerais, os resultados estão presentes na **(Figura 1)**, sendo que no ano de 2021 o abate de suínos em Santa Catarina chegou nos patamares dos 15 até 20 milhões de cabeças.
+
+```{r echo=F,message=F,error=F,warning=F}
+
+estados2 <- mesos_sp %>% filter(Trimestre=="1º trimestre 2020"|Trimestre=="2º trimestre 2020"|Trimestre=="3º trimestre 2020"|Trimestre=="4º trimestre 2020") %>% group_by(name_state) %>% summarize(suinos_no_ano=sum(Valor))
+###################################
+
+estados2$ano <- rep(2020,nrow(estados))
+estados <- rbind(estados,estados2)
+
+######################################################3
+
+estados2 <- mesos_sp %>% filter(Trimestre=="1º trimestre 2019"|Trimestre=="2º trimestre 2019"|Trimestre=="3º trimestre 2019"|Trimestre=="4º trimestre 2019") %>% group_by(name_state) %>% summarize(suinos_no_ano=sum(Valor))
+###################################
+
+estados2$ano <- rep(2019,nrow(estados2))
+estados <- rbind(estados,estados2)
+
+######################################################3
+
+estados2 <- mesos_sp %>% filter(Trimestre=="1º trimestre 2018"|Trimestre=="2º trimestre 2018"|Trimestre=="3º trimestre 2018"|Trimestre=="4º trimestre 2018") %>% group_by(name_state) %>% summarize(suinos_no_ano=sum(Valor))
+###################################
+
+estados2$ano <- rep(2018,nrow(estados2))
+estados <- rbind(estados,estados2)
+
+
+(tm <- tm_basemap(leaflet::providers$Stamen.TonerLite) +
+    tm_shape(estados) + tm_polygons("suinos_no_ano",textNA = "Sem Registro",labels = c("0mln até 5mln", "5mln até 10mln", "10mln até 15mln", "15mln até 20mln"),colorNA = "grey",title = "Suínos Abatidos")+
+    tm_tiles('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}') +
+    tm_layout(legend.position = c("left", "bottom"),
+              title.position = c('left', 'top'),legend.bg.alpha = 0.3,main.title= "Figura 1: Quantidade  de Suínos Abatidos por Estado",main.title.size = 1,main.title.position = "center")+
+    tm_compass(type = "4star", size = 2, position = c("right", "top"))+
+    #tm_text("name", size = "AREA")+,
+    tm_facets(by='ano'))
+
+```
+
+Além disso notando-se pela **(Figura 1)** alguns estados estão com registros faltantes desde 1997, dentre os estados com registros faltantes estão:
+
+
+```{r echo=F,message=F,error=F,warning=F}
+table(dados_sidra$`Brasil e Unidade da Federação`[is.na(dados_sidra$Valor)])
+#nao tem como fazer para esses estados
+
+
+```
+
+Devido a falta de registro em alguns estados, estes foram excluídos para construção do índice local de Moran. Para o caclculo do índice de Moran e do LISA, a distribuição dos vizinhos mais próximos (considerando os 3 vizinhos mais próximos) ficou como na Figura 2:
+
+```{r echo=F,message=F,error=F,warning=F}
+library(rgdal)
+library(spdep)
+
+par(mfrow=c(2,2))
+
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2021) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+plot(mesos_sp_sp, col='gray', border='blue', lwd=2,main= "Vizinhos 2021")
+plot(PPV3.w, coordinates(mesos_sp_sp), col='red', lwd=2, add=TRUE)#links
+#lots of variables missing
+
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2020) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+plot(mesos_sp_sp, col='gray', border='blue', lwd=2,main= "Vizinhos 2020")
+plot(PPV3.w, coordinates(mesos_sp_sp), col='red', lwd=2, add=TRUE)#links
+#lots of variables missing
+
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2019) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+plot(mesos_sp_sp, col='gray', border='blue', lwd=2,main= "Vizinhos 2019")
+plot(PPV3.w, coordinates(mesos_sp_sp), col='red', lwd=2, add=TRUE)#links
+#lots of variables missing
+
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2018) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+plot(mesos_sp_sp, col='gray', border='blue', lwd=2,main= "Vizinhos 2018")
+plot(PPV3.w, coordinates(mesos_sp_sp), col='red', lwd=2, add=TRUE)#links
+#lots of variables missing
+
+
+
+```
+
+**Figura 2 - mapa dos 3 vizinhos mais próximos em cada ano.**
+
+Os valores calculados para o Índice Global de Moran em cada ano foram:
+
+```{r echo=F,message=F,error=F,warning=F}
+
+data.frame(Ano=c(2018,2019,2020,2021),Moran=c(0.5865,0.5837,0.5618,0.5429),Pvalor=c(0.009,0.009,0.009,0.02))
+
+```
+
+Ou seja globalmente houve um padrão espacial positivo sobre o abatimento de suínos no Brasil, indicando que estados com maior abatimento de suínos tendem a ficar próximos de estados com maior abate, essa dependência foi identificada em todos os quatro anos analisados. Na Figura 3, os boxmaps mostram que a região Sul do país forma um cluster AA (Alto-Alto), ou seja uma região com um alto abate de número de suínos próxima de regiões que também possuem um alto abate no número de suínos, para saber se a dependência espacial local nesses estados é significativa realizaremos o cálculo do índice de Moran Local.
+
+
+
+```{r echo=F,message=F,error=F,warning=F}
+
+par(mfrow=c(2,2))
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2018) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+
+#death pop local
+local.mi.prod<-localmoran(mesos_sp_sp$suinos_no_ano, PPV3.w)
+
+mesos_sp_sp$lmi<-local.mi.prod[,1]
+
+mesos_sp_sp$lmi.p<-local.mi.prod[,5]
+
+mesos_sp_sp$lmi.p.sig<-as.factor(ifelse(local.mi.prod[,5]<.001,"Sig p<.001",
+                                        ifelse(local.mi.prod[,5]<.05,"Sig p<.05", "NS" )))
+
+
+
+
+
+#boxmap
+quadrant <- vector(mode="numeric",length=nrow(local.mi.prod))
+
+# centers the variable of interest around its mean
+m.qualification <- mesos_sp_sp$suinos_no_ano - mean(mesos_sp_sp$suinos_no_ano)     
+
+# centers the local Moran's around the mean
+m.local <- local.mi.prod[,1] - mean(local.mi.prod[,1])    
+
+# significance threshold
+signif <- 0.05 
+
+# builds a data quadrant
+#positions
+quadrant[m.qualification >0 & m.local>0] <- 4#AA  
+quadrant[m.qualification <0 & m.local<0] <- 1#BB      
+quadrant[m.qualification <0 & m.local>0] <- 2#BA
+quadrant[m.qualification >0 & m.local<0] <- 3#AB
+#quadrant[local.mi.prod[,5]>signif] <- 0#you can choose not to run it
+brks <- c(0,1,2,3,4)
+colors <- c("white","blue",rgb(0,0,1,alpha=0.4),rgb(1,0,0,alpha=0.4),"red")
+plot(mesos_sp_sp,border="lightgray",col=colors[findInterval(quadrant,brks,all.inside=FALSE)],main="Abate de Suínos BoxMap 2018")
+box()  
+legend("bottomleft", legend = c("Nenhum","BB","BA","AB","AA"),
+       fill=colors,bty="n")
+
+
+
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2019) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+
+#death pop local
+local.mi.prod<-localmoran(mesos_sp_sp$suinos_no_ano, PPV3.w)
+
+mesos_sp_sp$lmi<-local.mi.prod[,1]
+
+mesos_sp_sp$lmi.p<-local.mi.prod[,5]
+
+mesos_sp_sp$lmi.p.sig<-as.factor(ifelse(local.mi.prod[,5]<.001,"Sig p<.001",
+                                        ifelse(local.mi.prod[,5]<.05,"Sig p<.05", "NS" )))
+
+
+
+
+
+#boxmap
+quadrant <- vector(mode="numeric",length=nrow(local.mi.prod))
+
+# centers the variable of interest around its mean
+m.qualification <- mesos_sp_sp$suinos_no_ano - mean(mesos_sp_sp$suinos_no_ano)     
+
+# centers the local Moran's around the mean
+m.local <- local.mi.prod[,1] - mean(local.mi.prod[,1])    
+
+# significance threshold
+signif <- 0.05 
+
+# builds a data quadrant
+#positions
+quadrant[m.qualification >0 & m.local>0] <- 4#AA  
+quadrant[m.qualification <0 & m.local<0] <- 1#BB      
+quadrant[m.qualification <0 & m.local>0] <- 2#BA
+quadrant[m.qualification >0 & m.local<0] <- 3#AB
+#quadrant[local.mi.prod[,5]>signif] <- 0#you can choose not to run it
+brks <- c(0,1,2,3,4)
+colors <- c("white","blue",rgb(0,0,1,alpha=0.4),rgb(1,0,0,alpha=0.4),"red")
+plot(mesos_sp_sp,border="lightgray",col=colors[findInterval(quadrant,brks,all.inside=FALSE)],main="Abate de Suínos BoxMap 2019")
+box()  
+legend("bottomleft", legend = c("Nenhum","BB","BA","AB","AA"),
+       fill=colors,bty="n")
+
+
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2020) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+
+#death pop local
+local.mi.prod<-localmoran(mesos_sp_sp$suinos_no_ano, PPV3.w)
+
+mesos_sp_sp$lmi<-local.mi.prod[,1]
+
+mesos_sp_sp$lmi.p<-local.mi.prod[,5]
+
+mesos_sp_sp$lmi.p.sig<-as.factor(ifelse(local.mi.prod[,5]<.001,"Sig p<.001",
+                                        ifelse(local.mi.prod[,5]<.05,"Sig p<.05", "NS" )))
+
+
+
+
+
+#boxmap
+quadrant <- vector(mode="numeric",length=nrow(local.mi.prod))
+
+# centers the variable of interest around its mean
+m.qualification <- mesos_sp_sp$suinos_no_ano - mean(mesos_sp_sp$suinos_no_ano)     
+
+# centers the local Moran's around the mean
+m.local <- local.mi.prod[,1] - mean(local.mi.prod[,1])    
+
+# significance threshold
+signif <- 0.05 
+
+# builds a data quadrant
+#positions
+quadrant[m.qualification >0 & m.local>0] <- 4#AA  
+quadrant[m.qualification <0 & m.local<0] <- 1#BB      
+quadrant[m.qualification <0 & m.local>0] <- 2#BA
+quadrant[m.qualification >0 & m.local<0] <- 3#AB
+#quadrant[local.mi.prod[,5]>signif] <- 0#you can choose not to run it
+brks <- c(0,1,2,3,4)
+colors <- c("white","blue",rgb(0,0,1,alpha=0.4),rgb(1,0,0,alpha=0.4),"red")
+plot(mesos_sp_sp,border="lightgray",col=colors[findInterval(quadrant,brks,all.inside=FALSE)],main="Abate de Suínos BoxMap 2020")
+box()  
+legend("bottomleft", legend = c("Nenhum","BB","BA","AB","AA"),
+       fill=colors,bty="n")
+
+
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2021) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+
+#death pop local
+local.mi.prod<-localmoran(mesos_sp_sp$suinos_no_ano, PPV3.w)
+
+mesos_sp_sp$lmi<-local.mi.prod[,1]
+
+mesos_sp_sp$lmi.p<-local.mi.prod[,5]
+
+mesos_sp_sp$lmi.p.sig<-as.factor(ifelse(local.mi.prod[,5]<.001,"Sig p<.001",
+                                        ifelse(local.mi.prod[,5]<.05,"Sig p<.05", "NS" )))
+
+
+
+
+
+#boxmap
+quadrant <- vector(mode="numeric",length=nrow(local.mi.prod))
+
+# centers the variable of interest around its mean
+m.qualification <- mesos_sp_sp$suinos_no_ano - mean(mesos_sp_sp$suinos_no_ano)     
+
+# centers the local Moran's around the mean
+m.local <- local.mi.prod[,1] - mean(local.mi.prod[,1])    
+
+# significance threshold
+signif <- 0.05 
+
+# builds a data quadrant
+#positions
+quadrant[m.qualification >0 & m.local>0] <- 4#AA  
+quadrant[m.qualification <0 & m.local<0] <- 1#BB      
+quadrant[m.qualification <0 & m.local>0] <- 2#BA
+quadrant[m.qualification >0 & m.local<0] <- 3#AB
+#quadrant[local.mi.prod[,5]>signif] <- 0#you can choose not to run it
+brks <- c(0,1,2,3,4)
+colors <- c("white","blue",rgb(0,0,1,alpha=0.4),rgb(1,0,0,alpha=0.4),"red")
+plot(mesos_sp_sp,border="lightgray",col=colors[findInterval(quadrant,brks,all.inside=FALSE)],main="Abate de Suínos BoxMap 2021")
+box()  
+legend("bottomleft", legend = c("Nenhum","BB","BA","AB","AA"),
+       fill=colors,bty="n")
+
+
+
+
+```
+
+**Figura 3 - BoxMap para cada ano. (substituindo gráfico de quadrantes)**
+
+
+
+Como visto na Figura 4, houve uma dependência local positiva, (ou seja locais com alto abate de suínos próximos de locais com alto abate) significante pelo menos ao nível de 5%, sendo que na região Sul do país esse padrão espacial esteve presente nos últimos 4 anos, no entanto o estado de São Paulo na região Sudeste, classificado como AB no boxmap também manteve o mesmo padrão. Sendo portanto o eixo Sul-São Paulo um cluster de alto abatimento de suínos estatisticamente significativo a um nível de 5%.
+
+```{r echo=F,message=F,error=F,warning=F,fig.align='center'}
+
+##################################3
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2018) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+
+#death pop local
+local.mi.prod<-localmoran(mesos_sp_sp$suinos_no_ano, PPV3.w)
+
+mesos_sp_sp$lmi<-local.mi.prod[,1]
+
+mesos_sp_sp$lmi.p<-local.mi.prod[,5]
+
+mesos_sp_sp$lmi.p.sig<-as.factor(ifelse(local.mi.prod[,5]<.001,"Sig p<.001",
+                                        ifelse(local.mi.prod[,5]<.05,"Sig p<.05", "NS" )))
+
+
+
+
+spplot(mesos_sp_sp, "lmi.p.sig", col.regions=c("white", "#E6550D","#FDAE6B"), main = "Abate de Suinos 2018")
+
+
+
+##################################3
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2019) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+
+#death pop local
+local.mi.prod<-localmoran(mesos_sp_sp$suinos_no_ano, PPV3.w)
+
+mesos_sp_sp$lmi<-local.mi.prod[,1]
+
+mesos_sp_sp$lmi.p<-local.mi.prod[,5]
+
+mesos_sp_sp$lmi.p.sig<-as.factor(ifelse(local.mi.prod[,5]<.001,"Sig p<.001",
+                                        ifelse(local.mi.prod[,5]<.05,"Sig p<.05", "NS" )))
+
+
+
+
+spplot(mesos_sp_sp, "lmi.p.sig", col.regions=c("white", "#E6550D","#FDAE6B"), main = "Abate de Suinos 2019")
+
+
+##################################3
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2020) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+
+#death pop local
+local.mi.prod<-localmoran(mesos_sp_sp$suinos_no_ano, PPV3.w)
+
+mesos_sp_sp$lmi<-local.mi.prod[,1]
+
+mesos_sp_sp$lmi.p<-local.mi.prod[,5]
+
+mesos_sp_sp$lmi.p.sig<-as.factor(ifelse(local.mi.prod[,5]<.001,"Sig p<.001",
+                                        ifelse(local.mi.prod[,5]<.05,"Sig p<.05", "NS" )))
+
+
+
+
+spplot(mesos_sp_sp, "lmi.p.sig", col.regions=c("white", "#E6550D","#FDAE6B"), main = "Abate de Suinos 2020")
+
+
+##################################3
+#automodelo para peso de carcaça suinos
+estados21 <- estados %>% filter(ano==2021) 
+estados21 <- na.omit(estados21)
+mesos_sp_sp <- as(estados21,Class = "Spatial")
+centroids.df <- as.data.frame(coordinates(mesos_sp_sp))
+
+
+coor <- coordinates(mesos_sp_sp)
+cartePPV3.knn <- knearneigh(coor, k=3) #2 neighbours
+cartePPV3.nb <- knn2nb(cartePPV3.knn,row.names = mesos_sp_sp$name_state)
+PPV3.w <- nb2listw(cartePPV3.nb, style = "W", zero.policy = TRUE)#norm b
+
+
+#death pop local
+local.mi.prod<-localmoran(mesos_sp_sp$suinos_no_ano, PPV3.w)
+
+mesos_sp_sp$lmi<-local.mi.prod[,1]
+
+mesos_sp_sp$lmi.p<-local.mi.prod[,5]
+
+mesos_sp_sp$lmi.p.sig<-as.factor(ifelse(local.mi.prod[,5]<.001,"Sig p<.001",
+                                        ifelse(local.mi.prod[,5]<.05,"Sig p<.05", "NS" )))
+
+
+
+
+spplot(mesos_sp_sp, "lmi.p.sig", col.regions=c("white", "#E6550D","#FDAE6B"), main = "Abate de Suinos 2021")
+
+
+
+```
+
+**Figura 4 - Índice Local de Moran para cada ano.**
+
+
+## Conclusão
+
+Concluímos que houve padrão espacial positivo no abate de suínos no Brasil, identificado tanto pelo Moran Global, quanto pelo Moran Local, onde regiões com alto abate de suínos tendem a ficar próximas de regiões com alto abate, resumindo-se no eixo Sul-São Paulo, portanto é de extrema importância que medidas cautelares sejam tomadas, tanto em questões sanitárias, quanto em escoamento de produção nessas regiões para garantir que não haja um impacto sobre alguns destes estados que acabe prejudicando o padrão de abate de Suínos no país, visto a dependência identificada ao longo dos quatro anos analisados.
+
+## Referências
+
+
