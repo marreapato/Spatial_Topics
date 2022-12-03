@@ -1,20 +1,26 @@
 ---
 title: "Trabalho de Estatística Espacial"
 output:
-  pdf_document: default
+  # pdf_document: default
   html_document: default
-date: "Camila, Lucas Rabelo, Mariana e Samuel"
+date: "Camila Braz, Lucas Rabelo, Mariana Almeida e Samuel Veríssimo"
 ---
 
 # Objetivo
 
-O objetivo deste trabalho consiste em verificar a presença de algum padrão espacial em dados coletados na UFBA. 
+O objetivo deste trabalho é verificar a presença de padrão espacial de características de uma planta encontrada na Universidade Federal da Bahia - Campus Ondina. As análises foram realizadas no *Software R*.
 
+# Introdução
+
+A estatística espacial, ou geoestatística, é o campo da estatística que estuda métodos para ajudar a entender a aparente aleatoriedade dos dados estruturados de forma espacial e estabelecendo uma função de correlação espacial (Yamamoto e Landim, 2013). Em um campo, gramado, ou um mato, é possível encontrar grandes variedades de plantas, gramas, flores e ervas daninhas, que podem sofrer com diversas influencias externas como, alcance dos raios solares, perda de nutrientes, polinização de insetos e dispersão por meio de aves. O presente trabalho estudou o padrão de distribuição de plantas encontradas num campo, em um espaço público em um dos campus da Universidade Federal da Bahia (UFBA). 
+
+A análise do padrão espacial foi feita por meio de uma pesquisa de campo aliada a técnicas geoestatísticas como, geração de coordenadas de coleta, teste de aleatorização de Mantel, análise de anisotropia, entre outras - vistas durante as aulas da disciplina "Tópicos Especiais em Estatística A", ministradas pela professora Doutora Denise Nunes Viola, docente do Departamento de Estatística. 
 
 # Materiais e Métodos
 
-Inicialmente foram gerados 300 pares aleatórios de pontos no software R, e destes foram selecionados 50 pontos com suas respectivas coordenadas. O grid foi medido com uma área de 9 metros quadrados próximo a portaria 1 e estacionamento da Universidade Federal da Bahia, campus Ondina, e os 50 pontos gerados foram marcados dentro da área delimitada. Para delimitar a área foram utilizados barbante, palito de churrasco e fita métrica. Na figura abaixo são apresentados os pontos gerados no R.
+O objeto do experimento, as plantas, foram encontradas num gramado próximo à Portaria 1 da Universidade Federal da Bahia - Campus Ondina. A área definida possui 9 metros quadrados. As plantas estudadas são um tipo de flor, semelhante às margaridas. Inicialmente, 300 pares de pontos aleatórios foram gerados, e destes, foram selecionados 50 pontos com suas respectivas coordenadas. A área de 9 metros quadrados foi dividida num formato de rede ou *grid*. Com o auxílio do *grid*, os 50 pontos gerados aleatoriamente no *software* R foram marcados dentro da área delimitada.
 
+A marcação dos pontos foi realizada com o auxílio dos materiais: barbante, palito de churrasco e fita métrica.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -40,12 +46,36 @@ dados$grupo[1:50] <- "selecionado"
 
 dados$grupo[51:300] <- "n_selecionado"
 
-plot(x=dados$x,y=dados$y,pch="o",col=as.factor(dados$grupo),xlab="latitude",ylab="longitude",main="Pontos selecionados em Vermelho")
+plot(x=dados$x,y=dados$y,pch="o",col=as.factor(dados$grupo),xlab="Latitude",ylab="Longitude",main="Pontos selecionados em Vermelho")
 
 
 ```
 
+**Figura 1: Gráfico de 300 pontos gerados aleatoriamente, dos quais, 50 foram selecionados. Os pontos selecionados estão indicados pela cor vermelha.**
 
+A Figura 1 mostra, em vermelho, os pontos que foram selecionados para a amostragem das plantas.
+
+Para cada ponto vermelho gerado no gráfico, é colocado um palito de churrasco no respectivo ponto da área experimental (Figura 2). A planta mais próxima do palito de churrasco foi amostrada, de modo que foram registradas as informações:
+
+-   Altura da planta em centímetros;
+
+-   Presença de flor (1 - Sim, 0 - Não);
+
+-   Número de folhas;
+
+-   Número de pétalas.
+
+Caso a planta não apresentasse flor, era atribuído 0 para a presença de flor e número de pétalas.
+
+![Área Experimental](area_exp1.jpeg "Title")
+
+**Figura 2: Área experimental**
+
+A Figura 2 mostra uma foto da área experimental de 9 metros quadrados, delimitada por barbantes. É possível verificar que algumas áreas não possuem plantas. Assim, caso não tivesse plantas no local em que foi definida a amostragem com o palito de churrasco, é considerada a planta mais próxima. Um dos pontos não tinha plantas próximas num raio de $15$ cm, portanto, a análise foi realizada com a amostra de 49 plantas.
+
+# Análise descritiva
+
+A amostra contém $49$ plantas. A altura média das plantas é $9,3$cm, o número médio de folhas é $9,26$, e $11$ apresentaram flor. Dentre as plantas que tinham flor, o número médio de pétalas é de $2,6$.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -58,25 +88,38 @@ dados_nosso$altura <- c(21,0,2,1,0,8,25,15,17,5,4,10,2,13.5,35.5,28,2,2,18.75,12
 
 dados_nosso <- na.omit(dados_nosso)
 
+plot(dados_nosso$altura,dados_nosso$folhas,main="Dispersão Altura e Folhas",xlab="Altura",ylab="Folhas")
+
 
 ```
 
+**Figura 3: Gráfico de dispersão entre o número de folhas e a altura das plantas em centímetros.**
 
-A medida em que as informações eram coletadas em cada ponto, um palito de churrasco era colocado neste ponto. Para cada um deles foram coletadas a altura da planta em centímetros, a presença de flor, número de folhas e número de pétalas. Caso a planta não apresentasse flor, era atribuído 0 para a presença de flor e número de pétalas.
+```{r, warning = FALSE}
+#correlação entre altura e folhas, correlação entre altura e petalas
+cor.test(dados_nosso$altura,dados_nosso$folhas,method = "spearman")
+```
 
-Área experimental:
+A Figura 3 mostra o gráfico de dispersão entre as variáveis número de folhas e altura em centímetros das plantas. Pelo gráfico, parece haver correlação positiva entre as variáveis indicadas. Dado que as observações não seguem distribuição normal, será utilizado o teste de Spearman para verificar a correlação. O teste indica que existem evidências para rejeitar a hipótese que a verdadeira correlação é 0, portanto, existe correlação entre as variáveis.
 
-![Area Experimental](area_exp1.jpeg "Title")
+```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
-Se não houvesse planta no ponto indicado, a planta mais próxima era considerada. Um dos pontos não continha planta e nem plantas nas proximidades. Assim, a análise foi prosseguida com as outras 49 observações.    
+plot(dados_nosso$altura,dados_nosso$petalas,main="Dispersão Altura e Pétalas",xlab="Altura",ylab="Pétalas")
 
-# Análise descritiva
 
-A altura média das plantas é 9.3cm, o número médio de folhas é 9.26, e das 49 plantas analisadas 11 apresentaram flor. Dentre as que continham flor, o número médio de pétalas foi de 2.6.
+```
 
-Para identificar um padrão entre a altura da plata e número de folhas ou pétalas, foram feitos gráficos de dispersão e teste de correlação. Foi utilizado o teste de correlação de Spearman pois os dados não apresentaram normalidade de acordo com o teste de Shapiro-Wilk.
+**Figura 4: Gráfico de dispersão entre o número de pétalas e a altura das plantas em centímetros.**
 
-Os resultados do teste de normalidade Shapiro-Wilk abaixo são respectivamente para a altura, número de folhas e número de pétalas. O teste é bilateral porque não há informações a priori.
+A Figura 4 mostra o gráfico de dispersão entre as variáveis número de pétalas e altura em centímetros. Parece haver correlação positiva entre as variáveis indicadas.
+
+```{r, warning=FALSE}
+cor.test(dados_nosso$altura,dados_nosso$petalas,method = "spearman")
+```
+
+O teste de correlação de Spearman indica que existem evidências para rejeitar a hipótese que a verdadeira correlação é 0, portanto, existe correlação entre as variáveis.
+
+Agora será analisada a normalidade das variáveis altura em centímetros, número de folhas e número de pétalas. Como não existem informações a priori, será considerado o teste de Shapiro-Wilk, bilateral. Os resultados do teste de normalidade abaixo para a altura, número de folhas e número de pétalas, são respectivamente:
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -86,42 +129,19 @@ shapiro.test(dados_nosso$petalas)
 
 ```
 
-Todos os testes foram rejeitados a um nível de 5%, portanto há evidências de que a distribuição das variáveis altura, número de folhas e número de pétalas não segue uma distribuição normal.
-
-
-```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
-
-plot(dados_nosso$altura,dados_nosso$folhas,main="Dispersão Altura e Folhas",xlab="Altura",ylab="Folhas")
-
-# correlação entre altura e folhas, correlação entre altura e petalas
-cor.test(dados_nosso$altura,dados_nosso$folhas,method = "spearman")
-
-
-```
-
-
-Foi observada uma correlação positiva entre altura e quantidade de folhas, e através do teste de correlação há evidências para rejeitar a hipótese que a verdadeira correlação é 0.
-
-
-```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
-
-plot(dados_nosso$altura,dados_nosso$petalas,main="Dispersão Altura e Pétalas",xlab="Altura",ylab="Pétalas")
-
-cor.test(dados_nosso$altura,dados_nosso$petalas,method = "spearman")
-
-
-```
-
-
-Foi observada uma correlação positiva entre altura e quantidade de pétalas, e através do teste de correlação há evidências para rejeitar a hipótese que a verdadeira correlação é 0.
+Todos os testes foram rejeitados a um nível de 5%, portanto temos evidência de que a distribuição destas variáveis não é normal.
 
 ## Teste de Aleatorização de Mantel
 
-Caso os dados não sejam normais, não é possível realizar o semi variograma. Neste caso, nas próximas seções será utilizado o teste de aleatorização de Mantel. O número de simulações Monte-Carlo foi de 10000, e o interesse é testar se o padrão espacial é aleatório.
+Visto que o teste de Shapiro Wilk rejeitou a normalidade dos dados, não é possível avaliar o semi variograma. Portanto, será realizado o teste de aleatorização de Mantel considerando $10.000$ simulações Monte-Carlo.
+
+O teste de Mantel possui as hipóteses:
+
+$H_0:$ O padrão espacial é aleatório
+
+$H_1:$ O padrão espacial não é aleatório
 
 ## Análise do padrão para Altura
-
-Através da figura abaixo, é notada anisotropia em x. Porém, o mesmo não é identificado em y apesar de haver uma concentração de cores quentes (vermelho e amarelo) no primeiro gráfico. Realizando essa análise a sentimento os dados parecem apresentar padrão, mas caso haja pode ser fraco.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -129,7 +149,7 @@ Através da figura abaixo, é notada anisotropia em x. Porém, o mesmo não é i
 require(geoR)
 dados <- dados_nosso
 #plot(dados)
-dadosgeo=as.geodata(dados, coords.col = 1:2, data.col = 6)
+dadosgeo=geoR::as.geodata(dados, coords.col = 1:2, data.col = 6)
 #Avaliando Altura
 #plot(dadosgeo)
 
@@ -140,9 +160,11 @@ plot(dadosgeo)
 
 ```
 
+**Figura 5: Análise do padrão para Altura**
 
-Através do gráfico de distribuição dos pontos é observada uma concentração de plantas com maiores alturas no canto superior esquerdo e uma concentração de plantas com altura mais baixas no canto inferior direito. No entanto, reforça a idéia de que haja algum tipo de padrão.
+Na Figura 5, no painel superior esquerdo, é possível verificar que existe anisotropia no eixo x, porém o mesmo não é identificado em y. Realizando análise a sentimento, parece haver padrão no eixo y devido a concentração de cores quentes (vermelho e amarelo). No caso de haver anisotropia, será baixa.
 
+O painel superior direito, mostra a dispersão das plantas baixas. Nota-se que as plantas baixas estão concentradas no canto superior esquerdo. O painel inferior esquerdo mostra a dispersão das plantas altas. Esse painel, por outro lado, mostra que as plantas altas estão concentradas na área inferior esquerda. Esses resultados dão indícios de que existe algum tipo de padrão nos dados.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -150,8 +172,9 @@ points(dadosgeo,main="Distribuição dos Pontos Para Altura",xlab="Latitude",yla
 
 ```
 
-Realizando o Teste de Mantel (o resultado indica padrão aleatório), não há evidências a um nível de 5% de significância para rejeitar a hipótese de que o padrão é aleatório.
+**Figura 6: Distribuição dos pontos para a Altura**
 
+Na Figura 6, o gráfico de distribuição dos pontos mostra que existe uma concentração de plantas com altura alta no canto superior esquerdo e uma concentração de plantas com altura baixa no canto inferior direito, no entanto, reforçando a idéia de que existe algum tipo de padrão.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -244,12 +267,9 @@ paste("P-valor =",proc(10000))
 
 ```
 
-
+O Teste de Mantel não demonstra evidências, a um nível de 5% de significância, para rejeitar a hipótese de que o padrão é aleatório. Portanto, pode-se afirmar que os dados possuem padrão aleatório.
 
 ## Análise do padrão para a quantidade de pétalas
-
-Através da figura abaixo, não parece haver anisotropia em x e nem em y. Há apenas uma concentração de cores frias (azul e verde) no primeiro gráfico, e através da análise a sentimento os dados não parecem apresentar padrão espacial.
-
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -268,7 +288,9 @@ plot(dadosgeo)
 
 ```
 
-O gráfico de pontos também parece não indicar tendência de padrão espacial não aleatório na quantidade de pétalas.
+**Figura 7: Análise do padrão para a quantidade de pétalas**
+
+Na Figura 7 não parece haver anisotropia. No painel superior esquerdo, verifica-se a concentração de cores frias (azul e verde). Assim, realizando análise a sentimento parece não haver padrão espacial.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -276,8 +298,9 @@ points(dadosgeo,main="Distribuição dos Pontos Para Pétalas",xlab="Latitude",y
 
 ```
 
-Realizando o Teste de Mantel (o resultado indica padrão aleatório), não há evidências a um nível de 5% de significância para rejeitar a hipótese de que o padrão é aleatório.
+**Figura 8: Distribuição de pontos para as pétalas.**
 
+O gráfico de pontos, na Figura 8, parece não indicar tendência de padrão espacial não aleatório na quantidade de pétalas.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -370,15 +393,9 @@ paste("P-valor =",proc(10000))
 
 ```
 
-
-
+Realizando o Teste de Mantel, não temos evidencia a um nível de 5% de significância para rejeitar a hipótese de que o padrão é aleatório. Portanto, o resultado indica padrão aleatório.
 
 ## Análise do padrão para o número de folhas
-
-Pela figura abaixo, vemos anisotropia em x, porém o mesmo não é identificado em y. No primeiro gráfico é possível observar uma concentração de cores frias no canto inferior direito, enquanto no canto inferior esquerdo existe a concentração de cores quentes. No canto superior esquerdo e no meio do gráfico existe a concentração de cores quentes (amarelo e vermelho). 
-
-Realizando essa análise a sentimento, considerando a anisotropia em x e o gráfico de cores quentes e frias, parece haver indicativo de padrão espacial não aleatório.
-
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -397,7 +414,9 @@ plot(dadosgeo)
 
 ```
 
-O gráfico da distribuição dos pontos mostra a concentração de pontos de tamanho pequeno em diversas localizações, enquanto os pontos de tamanho médio e grande parecem estar mais dispersos pelo gráfico.
+**Figura 9: Análise do padrão para o número de folhas**
+
+Na Figura 9, verifica-se anisotropia no eixo x, porém o mesmo não é identificado em y. No primeiro gráfico, nota-se uma concentração de cores frias no canto inferior direito, enquanto no canto inferior esquerdo existe a concentração de cores quentes. Por outro lado, no canto superior esquerdo e no meio do gráfico existe a concentração de cores quentes (amarelo e vermelho). Realizando essa análise a sentimento, considerando a anisotropia em x e o gráfico de cores quentes e frias, parece haver indicativo de padrão espacial não aleatório.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -405,8 +424,9 @@ points(dadosgeo,main="Distribuição dos Pontos nas Folhas",xlab="Latitude",ylab
 
 ```
 
-Realizando o Teste de Mantel (o resultado indica padrão aleatório), não há evidencias a um nível de 5% de significância para rejeitar a hipótese de que o padrão é aleatório.
+**Figura 10: Distribuição dos Pontos nas Folhas**
 
+O gráfico da distribuição dos pontos, apresentado na Figura 10, mostra a concentração de pontos de tamanho pequeno em diversas localizações, enquanto os pontos de tamanho médio e grande parecem estar mais dispersos pelo gráfico.
 
 ```{r, echo=FALSE,message=FALSE,error=FALSE,warning=FALSE}
 
@@ -499,12 +519,13 @@ paste("P-valor =",proc(10000))
 
 ```
 
-
+Realizando o Teste de Mantel, não temos evidência, a um nível de 5% de significância, para rejeitar a hipótese de que o padrão é aleatório. Assim, o resultado indica padrão aleatório.
 
 # Conclusão
 
-Não foi encontrado padrão espacial a um nível de 5% de significância. No entanto, a probabilidade de se cometer o erro do tipo 1 ao rejeitar a hipótese de que o padrão espacial é aleatório para a quantidade de folhas é de 8%. 
-Como o erro do tipo 1 é baixo e a correlação de Spearman entre altura e número de folhas foi de 63%, talvez uma adaptação no método de coleta de dados, ou a coleta de mais pontos possa auxiliar na identificação de algum padrão na quantidade de folhas das plantas.
+Não foi encontrado padrão espacial a um nível de 5% de significância. No entanto, a probabilidade de se cometer o erro do tipo 1 ao rejeitar a hipótese de que o padrão espacial é aleatório para a quantidade de folhas é de 8%. Como o erro do tipo 1 é baixo e a correlação de Spearman entre altura e número de folhas é de 63%, uma adaptação no método de coleta de dados, ou a coleta de mais pontos, poderia ajudar a identificar algum padrão na quantidade de folhas das plantas.
 
 
+# Referências
 
+YAMAMOTO, Jorge Kazuo; LANDIM, Paulo Milton Barbosa. Geoestatística: conceitos e aplicações. São Paulo, SP: Oficina de Textos, 2013, 215p. ISBN 9788579750779.
